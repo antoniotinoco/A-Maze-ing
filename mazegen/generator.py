@@ -161,6 +161,56 @@ class MazeGenerator:
 
     def _add_loops(self) -> None:
         """Knock down a few extra walls to create loops."""
+        num_loops = max(1, (self.width * self.height) // 20)
+        attempts = 0
+        added = 0
+
+        while added < num_loops and attempts < num_loops * 10:
+            attempts += 1
+            x = self._rng.randint(0, self.width - 2)
+            y = self._rng.randint(0, self.height - 2)
+            direction = self._rng.choice([EAST, SOUTH])
+            dx, dy = DIRECTION_DELTA[direction]
+            nx, ny = x + dx, y + dy
+
+            if (
+                self.grid[y][x] & direction
+                and not self._would_create_wide_area(x, y, nx, ny, direction)
+            ):
+                self._open_wall(x, y, nx, ny, direction)
+                added += 1
+
+    def _would_create_wide_area(
+        self, x: int, y: int, nx: int, ny: int, direction: int
+    ) -> bool:
+        """Return True if opening this wall would create a 3x3 open area."""
+        for cx in range(max(0, x - 1), min(self.width - 3, x + 1) + 1):
+            for cy in range(max(0, y - 1), min(self.height - 3, y + 1) + 1):
+                if self._is_3x3_open(cx, cy, x, y, nx, ny, direction):
+                    return True
+        return False
+
+    def _is_3x3_open(
+        self,
+        cx: int, cy: int,
+        ox: int, oy: int,
+        nx: int, ny: int,
+        direction: int,
+    ) -> bool:
+        """Return True if the 3x3 block at (cx,cy) would be fully open."""
+        for bx in range(cx, cx + 3):
+            for by in range(cy, cy + 3):
+                walls = self.grid[by][bx]
+                if (bx, by) == (ox, oy):
+                    walls &= ~direction
+                if (bx, by) == (nx, ny):
+                    walls &= ~OPPOSITE[direction]
+                if bx < cx + 2 and (walls & EAST):
+                    return False
+                if by < cy + 2 and (walls & SOUTH):
+                    return False
+        return True
+
 
 
 
