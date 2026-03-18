@@ -6,7 +6,6 @@ from typing import Optional
 
 NORTH: int = 0b0001  # bit 0
 EAST:  int = 0b0010  # bit 1
-EAST: int = 0b0010  # bit 1
 SOUTH: int = 0b0100  # bit 2
 WEST: int = 0b1000  # bit 3
 
