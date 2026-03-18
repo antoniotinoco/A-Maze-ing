@@ -139,12 +139,12 @@ class MazeGenerator:
             for direction, (dx, dy) in DIRECTION_DELTA.items():
                 nx, ny = gx + dx, gy + dy
     
-                # ❗ ONLY close walls INSIDE the glyph
+    
                 if (nx, ny) in glyph:
                     self.grid[gy][gx] |= direction
                     self.grid[ny][nx] |= OPPOSITE[direction]
     
-        # IMPORTANT: DO NOT isolate cells completely
+        # DO NOT isolate cells completely
         # ensure each glyph cell has at least ONE opening
         for gx, gy in glyph:
             openings = 0
