@@ -1,8 +1,8 @@
-def config():
+def config(path="config.txt"):
     keys = ["WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"]
     config = {}
 
-    with open("config.txt", "r") as file:
+    with open(path, "r") as file:
         for line in file:
             line = line.strip()
 
