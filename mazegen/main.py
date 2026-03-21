@@ -1,95 +1,100 @@
-import pygame
+"""Main application flow for the A-Maze-ing project.
+
+This module connects all major parts of the program:
+- it reads and validates the config,
+- builds a maze generator,
+- generates and writes the maze,
+- launches the interactive terminal UI.
+"""
 
 from .config import config, validate_config
-from .writer import write_maze
+from .display import print_ui
 from .generator import MazeGenerator
-from .display import draw_maze, draw_path, draw_points, COLORS, CELL, BLACK
+from .writer import write_maze
 
 
-def main(config_path):
-    # 1. LOAD CONFIG
-    try:
-        cfg = validate_config(config(config_path))
-    except Exception as e:
-        print(f"Config error: {e}")
-        return
 
-    # 2. CREATE GENERATOR
-    gen = MazeGenerator(
+def _build_generator(cfg: dict) -> MazeGenerator:
+    """Create a :class:`MazeGenerator` from validated configuration values.
+
+    Args:
+        cfg: Validated configuration dictionary.
+
+    Returns:
+        A configured :class:`MazeGenerator` instance.
+    """
+    return MazeGenerator(
         cfg["WIDTH"],
         cfg["HEIGHT"],
         cfg["ENTRY"],
         cfg["EXIT"],
+        seed=cfg.get("SEED"),
         perfect=cfg["PERFECT"],
     )
 
+
+
+def _generate_and_write(gen: MazeGenerator, output_file: str) -> None:
+    """Generate a maze and immediately save it to disk.
+
+    This helper keeps the main flow easier to read by grouping together the
+    two actions that always happen back-to-back.
+
+    Args:
+        gen: Maze generator instance to use.
+        output_file: Path of the output file to write.
+    """
     gen.generate()
+    write_maze(gen, output_file)
 
-    grid = gen.grid
-    path = gen.solution_path_str()
-    entry = gen.entry
-    exit_pos = gen.exit
 
-    write_maze(gen, cfg["OUTPUT_FILE"])
 
-    # 3. INIT PYGAME
-    pygame.init()
+def main(config_path: str) -> None:
+    """Run the complete maze program.
 
-    screen = pygame.display.set_mode((len(grid[0]) * CELL, len(grid) * CELL))
-    pygame.display.set_caption("Maze | R:regen S:solution C:color Q:quit")
+    The function first loads the configuration and generates the maze. If that
+    succeeds, it enters a small interactive loop where the user can:
+    - quit,
+    - toggle the solution display,
+    - cycle wall colors,
+    - regenerate the maze.
 
-    clock = pygame.time.Clock()
+    Args:
+        config_path: Path to the configuration file provided by the user.
+    """
+    try:
+        cfg = validate_config(config(config_path))
+        gen = _build_generator(cfg)
+        _generate_and_write(gen, cfg["OUTPUT_FILE"])
+    except Exception as e:
+        print(f"Error: {e}")
+        return
 
     show_solution = False
     color_index = 0
 
+    while True:
+        print_ui(gen, show_solution, color_index)
+        command = input("> ").strip().lower()
 
-    # 4. MAIN LOOP
+        if command == "q":
+            break
+        if command == "s":
+            show_solution = not show_solution
+            continue
+        if command == "c":
+            color_index = (color_index + 1) % 4
+            continue
+        if command == "r":
+            try:
+                if cfg.get("SEED") is not None:
+                    cfg["SEED"] += 1
+                gen = _build_generator(cfg)
+                _generate_and_write(gen, cfg["OUTPUT_FILE"])
+                show_solution = False
+            except Exception as e:
+                print(f"Error: {e}")
+                break
+            continue
 
-    running = True
-    while running:
-        screen.fill(BLACK)
-
-        draw_maze(screen, grid, gen, COLORS[color_index])
-        draw_points(screen, entry, exit_pos)
-
-        if show_solution:
-            draw_path(screen, path, entry)
-
-        pygame.display.flip()
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-            if event.type == pygame.KEYDOWN:
-
-                # QUIT
-                if event.key == pygame.K_q:
-                    running = False
-
-                # SHOW/HIDE SOLUTION
-                elif event.key == pygame.K_s:
-                    show_solution = not show_solution
-
-                # CHANGE COLOR
-                elif event.key == pygame.K_c:
-                    color_index = (color_index + 1) % len(COLORS)
-
-                # REGENERATE
-                elif event.key == pygame.K_r:
-                    gen.generate()
-
-                    grid = gen.grid
-                    path = gen.solution_path_str()
-                    entry = gen.entry
-                    exit_pos = gen.exit
-
-                    show_solution = False
-
-                    # UPDATE OUTPUT FILE
-                    write_maze(gen, cfg["OUTPUT_FILE"])
-
-        clock.tick(60)
-
-    pygame.quit()
+        print("Unknown command. Use r, s, c or q.")
