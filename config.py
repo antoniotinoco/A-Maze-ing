@@ -108,10 +108,10 @@ def validate_config(parsed: dict[str, Any]) -> dict[str, Any]:
     parsed["WIDTH"] = width
     parsed["HEIGHT"] = height
 
-    perfect = parsed["PERFECT"]
-    if perfect == "True":
+    perfect = parsed["PERFECT"].strip().lower()
+    if perfect == "true":
         parsed["PERFECT"] = True
-    elif perfect == "False":
+    elif perfect == "false":
         parsed["PERFECT"] = False
     else:
         raise ValueError("PERFECT must be True or False")
