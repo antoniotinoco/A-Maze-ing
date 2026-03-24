@@ -1,6 +1,7 @@
 _This reusable module has been created as part of the 42 curriculum by aben-sal and atinoco-._
 
 ## MazeGen — Reusable Module
+MazeGen is a reusable Python module that generates, solves, and exposes maze structures using a wall-bit encoding system.
 
 ### Installation
 pip install mazegen-1.0.0-py3-none-any.whl

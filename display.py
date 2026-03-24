@@ -53,7 +53,7 @@ DOT = "dot"
 
 # Size of one maze cell in terminal "pixels".
 CELL_W = 3
-CELL_H = 2
+CELL_H = 3
 PIX = "  "
 
 
@@ -236,9 +236,9 @@ def _build_canvas(gen: MazeGenerator, show_solution: bool) -> list[list[str]]:
 
 def render_maze(
     gen: MazeGenerator,
+    color_index: int,
+    stamp_color_index: int,
     show_solution: bool = False,
-    color_index: int = 0,
-    stamp_color_index: int = 0,
 ) -> str:
     """Render the maze as one complete terminal string.
 
@@ -287,7 +287,7 @@ def print_ui(
     gen: MazeGenerator,
     show_solution: bool,
     color_index: int,
-    stamp_color_index: int = 0,
+    stamp_color_index: int,
 ) -> None:
     """Clear the screen and print the current maze interface.
 
@@ -298,4 +298,4 @@ def print_ui(
         stamp_color_index: Currently selected stamp color theme.
     """
     clear_screen()
-    print(render_maze(gen, show_solution, color_index, stamp_color_index))
+    print(render_maze(gen, color_index, stamp_color_index, show_solution))

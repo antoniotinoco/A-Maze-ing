@@ -82,7 +82,7 @@ def main(config_path: str) -> None:
             show_solution = not show_solution
             continue
         if command == "c":
-            color_index = (color_index + 1) % 4
+            color_index = (color_index + 1) % len(WALL_COLORS)
             continue
         if command == "t":
             stamp_color_index = (stamp_color_index + 1) % len(STAMP_COLORS)

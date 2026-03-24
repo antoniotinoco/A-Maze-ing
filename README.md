@@ -12,7 +12,7 @@ The generation logic is packaged as a reusable pip-installable module.
 A-Maze-ing generates random mazes from a configuration file and displays them
 in the terminal with colored ASCII rendering. The program supports perfect mazes
 (exactly one path between any two cells) and non-perfect mazes (with loops).
-Every maze contains a hidden "42" pattern formed by fully closed cells, and the
+Every maze contains a "42" pattern formed by fully closed cells, and the
 shortest solution path can be toggled on and off interactively.
 
 The core generation logic is available as a standalone pip-installable package
@@ -113,7 +113,7 @@ SEED=42
 ## Output File Format
 
 The output file contains:
-1. The maze grid — one row per line, one hexadecimal digit per cell.
+1. The maze grid: one row per line, one hexadecimal digit per cell.
 2. A blank line.
 3. The entry coordinates.
 4. The exit coordinates.
@@ -134,10 +134,10 @@ A closed wall sets the bit to `1`, an open passage sets it to `0`.
 
 ## Maze Generation Algorithm
 
-The program uses **recursive backtracker** (iterative depth-first search with
-an explicit stack).
+The program uses two algorithms: **recursive backtracker** (iterative depth-first
+search) to generate the maze, and **breadth-first search** to solve it.
 
-### How it works
+### Generation | Recursive Backtracker
 
 1. All cells start fully walled.
 2. The "42" pattern cells are marked as blocked.
@@ -149,24 +149,38 @@ an explicit stack).
    been visited.
 6. If `PERFECT=False`, extra random walls are removed after generation to
    create loops, while preventing any fully open 3×3 area.
-7. The solution is computed with breadth-first search to guarantee the
-   shortest path.
 
-### Why this algorithm
-
-The recursive backtracker was chosen for several reasons:
+### Why recursive backtracker
 
 - It is simple to implement correctly and easy to reason about.
 - It produces mazes with long, winding corridors which look visually
   interesting in the terminal.
 - It naturally integrates a seed for full reproducibility.
 - Adapting it to work around blocked cells (the "42" pattern) requires
-  minimal changes — just marking those cells as already visited.
+  minimal changes, just marking those cells as already visited.
 - Its iterative version avoids Python recursion limit issues on large mazes.
+
+### Solving | Breadth-First Search
+
+1. Starting from the entry cell, BFS explores all immediate neighbors first
+   before moving further.
+2. Each node in the queue carries the full path taken to reach it.
+3. When a branch hits a dead end, it simply produces no new queue entries
+   and silently disappears (no explicit backtracking needed).
+4. The first time the exit cell is reached, the search stops immediately.
+
+### Why BFS for solving
+
+- Because BFS explores level by level, the first time it reaches the exit
+  it is guaranteed to have taken the fewest steps, making the solution
+  the shortest possible path.
+- It is straightforward to implement and reason about.
+- Unlike DFS, it never needs to backtrack or discard partial solutions
+  explicitly. Dead end branches just die naturally when the queue moves on.
 
 ---
 
-## Reusable Module — mazegen
+## Reusable Module | mazegen
 
 The maze generation logic is packaged as a standalone pip-installable module.
 It has no external dependencies and can be used in any Python 3.10+ project.
@@ -239,16 +253,16 @@ python -m build
 
 | Member | Responsibilities |
 |--------|-----------------|
-| `aben-sal` | Maze generation algorithm, output file format, package structure |
-| `atinoco-` | Terminal display, configuration parsing, Makefile, README |
+| `atinoco-` | Maze generation algorithm, package structure, helper files, Makefile, README |
+| `aben-sal` | Maze solution algorithm, terminal display, configuration parsing, output file format |
 
 ### Planning
 
 Initially we estimated the project would split evenly between the generation
 logic and the display/output side. In practice the generation took longer than
-expected — getting the "42" pattern to work correctly with the DFS carving and
+expected. Getting the "42" pattern to work correctly with the DFS carving and
 ensuring full connectivity across all maze sizes required several iterations.
-The packaging and reusability part (Chapter VI) also took more time than
+The packaging and reusability part also took more time than
 anticipated because of Python import system subtleties when mixing a
 pip-installable package with a plain script project.
 
@@ -264,7 +278,7 @@ pip-installable package with a plain script project.
 
 - Adding support for multiple generation algorithms (Prim's, Kruskal's) would
   make the project more interesting and is listed as a bonus.
-- The terminal display is limited by cell size — very large mazes become hard
+- The terminal display is limited by cell size. Very large mazes become hard
   to read. A graphical MLX display would scale better.
 
 ### Tools used
