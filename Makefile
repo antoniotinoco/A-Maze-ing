@@ -5,7 +5,7 @@ CONFIG = config.txt
 .PHONY: install run debug clean lint lint-strict
 
 install:
-	.venv/bin/pip install -e ".[dev]"
+	python -m pip install -e ".[dev]"
 
 run:
 	$(PYTHON) $(MAIN) $(CONFIG)
