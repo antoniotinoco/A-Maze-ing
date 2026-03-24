@@ -52,7 +52,7 @@ def config(path: str = "config.txt") -> dict[str, str]:
                     raise ValueError(f"Invalid line format | {line}")
 
                 key, value = line.split("=", 1)
-                key = key.strip()
+                key = key.strip().upper()
                 value = value.strip()
 
                 if key not in allowed_keys:

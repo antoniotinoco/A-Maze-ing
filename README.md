@@ -12,8 +12,10 @@ The generation logic is packaged as a reusable pip-installable module.
 A-Maze-ing generates random mazes from a configuration file and displays them
 in the terminal with colored ASCII rendering. The program supports perfect mazes
 (exactly one path between any two cells) and non-perfect mazes (with loops).
-Every maze contains a "42" pattern formed by fully closed cells, and the
-shortest solution path can be toggled on and off interactively.
+When the maze is large enough, it contains a visible "42" pattern formed by
+fully closed cells. If the maze is too small for the pattern, it is omitted and
+an error message is printed. The shortest solution path can be toggled on and
+off interactively.
 
 The core generation logic is available as a standalone pip-installable package
 called `mazegen`, which can be reused in any other Python project.
@@ -49,6 +51,12 @@ make run
 Or directly:
 ```bash
 python3 a_maze_ing.py config.txt
+```
+
+### Building the reusable package
+```bash
+pip install build
+python -m build
 ```
 
 ### Interactive commands
@@ -105,7 +113,6 @@ ENTRY=0,0
 EXIT=19,14
 OUTPUT_FILE=maze.txt
 PERFECT=True
-SEED=42
 ```
 
 ---
@@ -284,13 +291,11 @@ pip-installable package with a plain script project.
 ### Tools used
 
 - **VS Code** — main editor
+- **PyCharm** — secondary editor
+- **WSL** — development environment
 - **mypy** — static type checking
-- **flake8** — code style
+- **flake8** — code style checking
 - **pytest** — local unit testing (not submitted)
-- **Claude (Anthropic)** — used for guidance on Python packaging (`pyproject.toml`
-  setup, pip-installable module structure), resolving mypy type errors, and
-  reviewing exception handling patterns. All generated suggestions were reviewed,
-  tested, and adapted manually before inclusion.
 
 ---
 
@@ -306,3 +311,11 @@ pip-installable package with a plain script project.
 - [PEP 257 — Docstring conventions](https://peps.python.org/pep-0257/)
 - [collections.deque — Python docs](https://docs.python.org/3/library/collections.html#collections.deque)
 - [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code)
+
+### AI usage
+
+AI was used for guidance on Python packaging (`pyproject.toml`, build setup,
+and pip-installable module structure), for reviewing mypy type errors, and for
+checking some exception-handling patterns. Generated suggestions were reviewed,
+tested, discussed between teammates, and manually adapted before being kept in
+the project.
