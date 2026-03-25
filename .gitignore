@@ -14,7 +14,7 @@ build/
 *.egg
 *.whl
 *.tar.gz
-!mazegen-*.whl
+!mazegen-*.tar.gz
 
 # Virtual environments
 .venv/

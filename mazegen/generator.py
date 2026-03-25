@@ -122,7 +122,9 @@ class MazeGenerator:
             raise ValueError("width and height must be positive integers")
         if not isinstance(entry, tuple) or len(entry) != 2:
             raise TypeError("entry must be a tuple of (x, y)")
-        if exit is not None and (not isinstance(exit, tuple) or len(exit) != 2):
+        if exit is not None and (
+            not isinstance(exit, tuple) or len(exit) != 2
+        ):
             raise TypeError("exit must be a tuple of (x, y)")
         if not isinstance(perfect, bool):
             raise TypeError("perfect must be a boolean")
@@ -174,7 +176,9 @@ class MazeGenerator:
             self._set_stamp42()
 
             if self.entry in self.stamp42 or self.exit in self.stamp42:
-                raise ValueError("Entry or exit cannot be inside the 42 pattern")
+                raise ValueError(
+                    "Entry or exit cannot be inside the 42 pattern"
+                )
 
             self._carve_passages()
 
@@ -188,7 +192,9 @@ class MazeGenerator:
             if self._solution:
                 return
 
-        raise RuntimeError("Failed to generate a valid maze after multiple attempts")
+        raise RuntimeError(
+            "Failed to generate a valid maze after multiple attempts"
+        )
 
     def _init_grid(self) -> None:
         """Create a fresh grid where every cell starts fully closed.
@@ -199,7 +205,9 @@ class MazeGenerator:
         - South bit set
         - West bit set
         """
-        self.grid = [[0xF for _ in range(self.width)] for _ in range(self.height)]
+        self.grid = [
+            [0xF for _ in range(self.width)] for _ in range(self.height)
+        ]
 
     def _set_stamp42(self) -> None:
         """Place the 42 pattern in the center of the maze when possible.
@@ -388,10 +396,16 @@ class MazeGenerator:
         for y in range(ty, ty + 3):
             for x in range(tx, tx + 3):
                 if x + 1 <= tx + 2:
-                    if (self.grid[y][x] & EAST) or (self.grid[y][x + 1] & WEST):
+                    if (
+                        (self.grid[y][x] & EAST)
+                        or (self.grid[y][x + 1] & WEST)
+                    ):
                         return False
                 if y + 1 <= ty + 2:
-                    if (self.grid[y][x] & SOUTH) or (self.grid[y + 1][x] & NORTH):
+                    if (
+                        (self.grid[y][x] & SOUTH)
+                        or (self.grid[y + 1][x] & NORTH)
+                    ):
                         return False
         return True
 

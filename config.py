@@ -65,8 +65,8 @@ def config(path: str = "config.txt") -> dict[str, str]:
                     )
 
                 parsed[key] = value
-    except FileNotFoundError:
-        raise FileNotFoundError(f"Config file not found: '{path}'")
+    except OSError as e:
+        raise OSError(f"Could not open config file '{path}': {e}") from e
 
     missing = required_keys - parsed.keys()
     if missing:
