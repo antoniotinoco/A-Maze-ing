@@ -12,6 +12,8 @@ rest of the program can safely work with already validated values.
 
 from typing import Any
 
+MAX_DIMENSION = 50
+
 
 def config(path: str = "config.txt") -> dict[str, str]:
     """Read a configuration file and return its raw key/value pairs.
@@ -104,6 +106,8 @@ def validate_config(parsed: dict[str, Any]) -> dict[str, Any]:
 
     if width <= 0 or height <= 0:
         raise ValueError("WIDTH and HEIGHT must be positive integers")
+    if width > MAX_DIMENSION or height > MAX_DIMENSION:
+        raise ValueError(f"WIDTH and HEIGHT must be <= {MAX_DIMENSION}")
 
     parsed["WIDTH"] = width
     parsed["HEIGHT"] = height

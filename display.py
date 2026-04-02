@@ -192,8 +192,6 @@ def _build_canvas(gen: MazeGenerator, show_solution: bool) -> list[list[str]]:
                 _fill_rect(canvas, ox + CELL_W, oy, 1, CELL_H, EMPTY)
             if not (cell & SOUTH):
                 _fill_rect(canvas, ox, oy + CELL_H, CELL_W, 1, EMPTY)
-            if not (cell & EAST) and not (cell & SOUTH):
-                canvas[oy + CELL_H][ox + CELL_W] = EMPTY
 
     for x, y in gen.stamp42:
         ox, oy = _cell_origin(x, y)
