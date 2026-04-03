@@ -4,6 +4,9 @@ _This project has been created as part of the 42 curriculum by aben-sal and atin
 
 A Python maze generator that creates, solves, and displays mazes in the terminal.
 The generation logic is packaged as a reusable pip-installable module.
+<p align="center">
+  <img src="maze.png" alt="Maze preview" width="600"/>
+</p>
 
 ---
 
